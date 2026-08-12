@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam-Ham Detector</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: white;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 650px;
+            background: #1e293b;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 160px;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: white;
+            font-size: 16px;
+            resize: none;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #3b82f6;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+            display: none;
+        }
+
+        .spam {
+            background: #7f1d1d;
+        }
+
+        .ham {
+            background: #166534;
+        }
+
+        .error {
+            background: #92400e;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📩 Spam-Ham Detector</h1>
+
+    <p class="subtitle">
+        Enter a message and our AI model will classify it.
+    </p>
+
+    <textarea
+        id="message"
+        placeholder="Type your message here..."
+    ></textarea>
+
+    <button onclick="checkMessage()">
+        Check Message
+    </button>
+
+    <div id="result"></div>
+
+</div>
+
+
+<script>
+
+async function checkMessage() {
+
+    const message = document.getElementById("message").value.trim();
+    const result = document.getElementById("result");
+
+    if (!message) {
+        result.style.display = "block";
+        result.className = "error";
+        result.innerText = "Please enter a message.";
+        return;
+    }
+
+    result.style.display = "block";
+    result.className = "";
+    result.innerText = "Checking message...";
+
+    try {
+
+        const response = await fetch("/predict", {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                message: message
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.prediction === "Spam") {
+
+            result.className = "spam";
+            result.innerText = "⚠️ This message is Spam";
+
+        } else {
+
+            result.className = "ham";
+            result.innerText = "✅ This message is Ham";
+
+        }
+
+    } catch (error) {
+
+        result.className = "error";
+        result.innerText = "Something went wrong.";
+
+    }
+}
+
+</script>
+
+</body>
+</html>
