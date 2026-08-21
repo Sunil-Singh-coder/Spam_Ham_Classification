@@ -1,16 +1,31 @@
+import os
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import joblib
 import re
 from nltk.stem import WordNetLemmatizer
+from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
+import joblib
+import re
+import os
+import nltk
+
+nltk.download("wordnet")
+nltk.download("omw-1.4")
+
+app = Flask(__name__)
+CORS(app)
 
 app = Flask(__name__)
 CORS(app)
 
 # Load trained files
-model = joblib.load("spam_model.pkl")
-cv = joblib.load("count_vectorizer.pkl")
-le = joblib.load("label_encoder.pkl")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+model = joblib.load(os.path.join(BASE_DIR, "spam_model.pkl"))
+cv = joblib.load(os.path.join(BASE_DIR, "count_vectorizer.pkl"))
+le = joblib.load(os.path.join(BASE_DIR, "label_encoder.pkl"))
 
 wnl = WordNetLemmatizer()
 

@@ -1,4 +1,7 @@
 Flask
+Flask-Cors
+joblib
+nltk
 numpy
 pandas
 scikit-learn
